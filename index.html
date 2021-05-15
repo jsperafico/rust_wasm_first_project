@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <header>
+        <title>This is an example of an webassembly usage</title>
+        <!-- ============================================================== -->
+        <!-- Cannot use import statement outside a module-->
+        <!--<script src="/pkg/rust_wasm_first_project.js"></script> -->
+        <!-- ============================================================== -->
+        <!-- Cannot use method outside promise -->
+        <!-- <script>
+            var importObject = { 
+                imports: { 
+                    imported_func: add => console.log(add) 
+                }
+            };
+            WebAssembly.instantiateStreaming(fetch("pkg/rust_wasm_first_project_bg.wasm"), importObject)
+            .then(obj => {
+                const ADD = obj.instance.exports.add;
+                console.log(ADD(1,2));
+                console.log(ADD(10,20));
+            });
+        </script>
+        <script>
+            window.onload = function() {
+                var h2 = document.getElementsByTagName("h2"[0]);
+                document.getElementsByTagName("button")[0].addEventListener("click", function () {
+                    h2.innerText = add(1, 4);
+                });
+            }
+        </script> -->
+        <!--  -->
+        <script>
+            const wasmBrowserInstantiate = async (wasmModuleUrl, importObject) => {
+                let response = undefined;
+
+                if (!importObject) {
+                    importObject = {
+                        env: {
+                            abort: () => console.log("Abort!")
+                        }
+                    };
+                }
+
+                if (WebAssembly.instantiateStreaming) {
+                    response = await  WebAssembly.instantiateStreaming(fetch(wasmModuleUrl), importObject);
+                } else {
+                    let fetchAndInstantite = async () => {
+                        let wasmArrayBuffer = await fetch(wasmModuleUrl).then( respnse => respnse.arrayBuffer());
+                        return WebAssembly.instantiate(wasmArrayBuffer, importObject);
+                    }
+                    response = await fetchAndInstantite();
+                }
+                return resposne;
+            }
+        </script>
+        <script>
+            var importObject = { 
+                imports: { 
+                    imported_func: add => console.log(add) 
+                }
+            };
+            const runWasm = async () => {
+                const wasmModule = await wasmBrowserInstantiate("pkg/rust_wasm_first_project_bg.wasm", importObject);
+                var h2 = document.getElementsByTagName("h2"[0]);
+                document.getElementsByTagName("button")[0].addEventListener("click", function () {
+                    h2.innerText = wasmModule.instance.exports.add(1, 4);
+                });
+            };
+            runWasm();
+        </script>
+    </header>
+    <body>
+        <button>Click me!</button>
+        <h1>Result:</h1>
+        <h2></h2>
+    </body>
+</html>
