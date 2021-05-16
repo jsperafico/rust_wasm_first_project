@@ -4,62 +4,55 @@
         <title>How about game of life?</title>
         <style>
             body {
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: center;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                display: grid;
+                grid-template-areas: 
+                        "fps1 game1" 
+                        "fps2 game2";
+                grid-template-columns: 150px auto;
+                grid-template-rows: auto;
             }
-          </style>
-        <script>
-            const wasmBrowserInstantiate = async (wasmModuleUrl, importObject) => {
-                let response = undefined;
+            h1 {
+                grid-area: fps1;
+            }
+            pre {
+                grid-area: game1;
+            }
+        </style>
+        <script type='module'>
+            import init, {Cell, Universe} from './pkg/rust_wasm_first_project.js';
 
-                if (!importObject) {
-                    importObject = {
-                        env: {
-                            abort: () => console.log("Abort!")
-                        }
-                    };
-                }
+            async function run() {
+                await init();
+                const pre = document.getElementsByTagName('pre')[0];
+                const h1 = document.getElementsByTagName('h1')[0];
+                const universe = Universe.new();
 
-                if (WebAssembly.instantiateStreaming) {
-                    response = await WebAssembly.instantiateStreaming(fetch(wasmModuleUrl), importObject);
-                } else {
-                    let fetchAndInstantite = async () => {
-                        let wasmArrayBuffer = await fetch(wasmModuleUrl).then( respnse => respnse.arrayBuffer());
-                        return WebAssembly.instantiate(wasmArrayBuffer, importObject);
+                const times = [];
+
+                function render(timestamp) {
+                    const now = performance.now();
+                    while (times.length > 0 && times[0] <= now - 1000) {
+                        times.shift();
                     }
-                    response = await fetchAndInstantite();
-                }
-                return response;
-            }
-        </script>
-        <script>
-            let universe = null;
-            let wasmExports = null;
-            async function loadWasm() {
-                let wasmModule = await wasmBrowserInstantiate("pkg/rust_wasm_first_project_bg.wasm");
-                wasmExports = wasmModule.instance.exports
-            }
-            loadWasm();
-            
-            window.requestAnimationFrame(function() {
-                if (wasmExports != null && wasmExports.Universe != null) {
-                    universe = wasmExports.Universe.new();
-                    
-                    var pre = document.getElementsByTagName("pre")[0];
+                    times.push(now);
+                    h1.innerHTML = 'FPS: ' + times.length;
+
                     pre.textContent = universe.render();
                     universe.tick();
+
+                    window.requestAnimationFrame(render);
                 }
-            });
+                render();
+            }
+            run();
         </script>
     </header>
     <body>
+        <h1>FPS:</h1>
         <pre></pre>
     </body>
 </html>

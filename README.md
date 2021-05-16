@@ -6,10 +6,29 @@ If you are on Visual Code, please use the extension "Five Server (Live Server)" 
 Install `wasm-pack` by using:
 ```
 cargo install wasm-pack
-````
+```
 
 
-To generate vanilla code, please use:
+To generate vanilla js code, please use:
 ```
-wasm-pack build --target web
+wasm-pack build --no-typescript --target web
 ```
+
+Possible targets:
+- bundler * default
+- nodejs
+- web
+- no-modules
+
+Make sure to use:
+```
+<script type="module">
+    import init, { desired_method } from './pkg/file.js';
+    async function run () {
+        await init();
+        //then you can use your desired_method
+    }
+</script>
+```
+
+More info check [the official documentation here](https://rustwasm.github.io/wasm-bindgen/examples/without-a-bundler.html).

@@ -109,9 +109,6 @@ impl fmt::Display for Universe {
     }
 }
 
-//[][]
-
-
 #[cfg(test)]
 mod tests {
     use super::{Universe};
