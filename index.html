@@ -1,7 +1,20 @@
 <!DOCTYPE html>
 <html>
     <header>
-        <title>This is an example of an webassembly usage</title>
+        <title>How about game of life?</title>
+        <style>
+            body {
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+            }
+          </style>
         <script>
             const wasmBrowserInstantiate = async (wasmModuleUrl, importObject) => {
                 let response = undefined;
@@ -27,6 +40,7 @@
             }
         </script>
         <script>
+            let universe = null;
             let wasmExports = null;
             async function loadWasm() {
                 let wasmModule = await wasmBrowserInstantiate("pkg/rust_wasm_first_project_bg.wasm");
@@ -34,17 +48,18 @@
             }
             loadWasm();
             
-            window.onload = function() {
-                var h2 = document.getElementsByTagName("h2")[0];
-                document.getElementsByTagName("button")[0].addEventListener("click", function () {
-                    h2.textContent = wasmExports.add(1, 4);
-                });
-            };
+            window.requestAnimationFrame(function() {
+                if (wasmExports != null && wasmExports.Universe != null) {
+                    universe = wasmExports.Universe.new();
+                    
+                    var pre = document.getElementsByTagName("pre")[0];
+                    pre.textContent = universe.render();
+                    universe.tick();
+                }
+            });
         </script>
     </header>
     <body>
-        <button>Click me!</button>
-        <h1>Result:</h1>
-        <h2></h2>
+        <pre></pre>
     </body>
 </html>
