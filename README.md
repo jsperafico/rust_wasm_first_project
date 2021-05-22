@@ -9,9 +9,10 @@ cargo install wasm-pack
 ```
 
 
-To generate vanilla js code, please use:
+To generate vanilla js code, being on `root` folder, please use the following commands:
 ```
-wasm-pack build --no-typescript --target web --out-dir package
+wasm-pack build --no-typescript --target web --out-dir package space_invaders
+wasm-pack build --no-typescript --target web --out-dir package game_of_life
 ```
 
 Possible targets:
