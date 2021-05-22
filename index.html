@@ -21,11 +21,17 @@
             pre {
                 grid-area: game1;
             }
+            h2 {
+                grid-area: fps2;
+            }
+            div {
+                grid-area: game2;
+            }
         </style>
         <script type='module'>
-            import init, {Cell, Universe} from './package/rust_wasm_first_project.js';
+            import init, {Cell, Universe} from './game_of_life/package/game_of_life.js';
 
-            async function run() {
+            async function runGameOfLife() {
                 await init();
                 const pre = document.getElementsByTagName('pre')[0];
                 const h1 = document.getElementsByTagName('h1')[0];
@@ -33,7 +39,7 @@
 
                 const times = [];
 
-                function render(timestamp) {
+                function renderGameOfLife(timestamp) {
                     const now = performance.now();
                     while (times.length > 0 && times[0] <= now - 1000) {
                         times.shift();
@@ -44,15 +50,43 @@
                     pre.textContent = universe.render();
                     universe.tick();
 
-                    window.requestAnimationFrame(render);
+                    window.requestAnimationFrame(renderGameOfLife);
                 }
-                render();
+                renderGameOfLife();
             }
-            run();
+            runGameOfLife();
+        </script>
+        <script type='module'>
+            import init, {Player, Shot} from './space_invaders/package/space_invaders.js';
+
+            async function runSpaceInvaders() {
+                await init();
+                let j = Player.new();
+                const h2 = document.getElementsByTagName('h2')[0];
+                const div = document.getElementsByTagName('div')[0];
+                const times = [];
+
+                function renderSpaceInvaders(timestamp) {
+                    const now = performance.now();
+                    while (times.length > 0 && times[0] <= now - 1000) {
+                        times.shift();
+                    }
+                    times.push(now);
+
+                    h2.innerHTML = 'FPS: ' + times.length;
+                    div.innerHTML = j;
+
+                    window.requestAnimationFrame(renderSpaceInvaders);
+                }
+                renderSpaceInvaders();
+            }
+            runSpaceInvaders();
         </script>
     </header>
     <body>
         <h1>FPS:</h1>
         <pre></pre>
+        <h2>FPS:</h2>
+        <div></div>
     </body>
 </html>

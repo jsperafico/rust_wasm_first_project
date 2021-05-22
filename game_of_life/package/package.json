@@ -1,0 +1,13 @@
+{
+  "name": "game_of_life",
+  "collaborators": [
+    "Jonathan Pinto Sperafico <jhonny.potter@gmail.com>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "game_of_life_bg.wasm",
+    "game_of_life.js"
+  ],
+  "module": "game_of_life.js",
+  "sideEffects": false
+}

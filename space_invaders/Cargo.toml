@@ -1,5 +1,5 @@
 [package]
-name = "rust_wasm_first_project"
+name = "space_invaders"
 version = "0.1.0"
 authors = ["Jonathan Pinto Sperafico <jhonny.potter@gmail.com>"]
 edition = "2018"
