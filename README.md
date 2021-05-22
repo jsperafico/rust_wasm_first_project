@@ -11,7 +11,7 @@ cargo install wasm-pack
 
 To generate vanilla js code, please use:
 ```
-wasm-pack build --no-typescript --target web
+wasm-pack build --no-typescript --target web --out-dir package
 ```
 
 Possible targets:
@@ -23,7 +23,7 @@ Possible targets:
 Make sure to use:
 ```
 <script type="module">
-    import init, { desired_method } from './pkg/file.js';
+    import init, { desired_method } from './package/file.js';
     async function run () {
         await init();
         //then you can use your desired_method
