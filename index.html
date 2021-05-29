@@ -33,7 +33,6 @@
                 const div = document.getElementById('game1');
                 const h1 = document.getElementsByTagName('h1')[0];
                 const universe = Universe.new();
-                const parser = new DOMParser();
 
                 const times = [];
 
@@ -46,7 +45,7 @@
                     h1.innerHTML = 'FPS: ' + times.length;
 
 
-                    div.textContent = parser.parseFromString(universe.render(), 'text/html').body.innerText;
+                    div.textContent = universe.render(), 'text/html';
                     universe.tick();
 
                     window.requestAnimationFrame(renderGameOfLife);
