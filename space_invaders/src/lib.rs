@@ -1,5 +1,5 @@
 mod frame;
-mod invader;
+mod invaders;
 mod player;
 mod shot;
 

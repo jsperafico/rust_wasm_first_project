@@ -1,23 +1,17 @@
 use wasm_bindgen::prelude::*;
+use std::time::Duration;
 
-use crate::{NUM_COLS, NUM_ROWS, frame::{Drawable, Frame}, shot::Shot, invader::Invaders};
+use crate::{NUM_COLS, NUM_ROWS, frame::{Drawable, Frame}, shot::Shot, invaders::Invaders};
 
 #[wasm_bindgen]
 pub struct Player {
-    pub x: usize,
-    pub y: usize,
+    x: usize,
+    y: usize,
     shots: Vec<Shot>,
 }
 
+#[wasm_bindgen]
 impl Player {
-    pub fn new() -> Self {
-        Self {
-            x: NUM_COLS / 2,
-            y: NUM_ROWS - 1,
-            shots: Vec::new(),
-        }
-    }
-
     pub fn left(&mut self) {
         self.x -= if self.x > 0 { 1 } else { 0 }
     }
@@ -34,8 +28,18 @@ impl Player {
             false
         }
     }
+}
 
-    pub fn update(&mut self, delta: usize) {
+impl Player {
+    pub fn new() -> Self {
+        Self {
+            x: NUM_COLS / 2,
+            y: NUM_ROWS - 1,
+            shots: Vec::new(),
+        }
+    }
+
+    pub fn update(&mut self, delta: Duration) {
         for shot in self.shots.iter_mut() {
             shot.update(delta);
         }

@@ -18,10 +18,115 @@ function getStringFromWasm0(ptr, len) {
 }
 /**
 */
+export class Invader {
+
+    __destroy_into_raw() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_invader_free(ptr);
+    }
+    /**
+    * @returns {number}
+    */
+    get x() {
+        var ret = wasm.__wbg_get_invader_x(this.ptr);
+        return ret >>> 0;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set x(arg0) {
+        wasm.__wbg_set_invader_x(this.ptr, arg0);
+    }
+    /**
+    * @returns {number}
+    */
+    get y() {
+        var ret = wasm.__wbg_get_invader_y(this.ptr);
+        return ret >>> 0;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set y(arg0) {
+        wasm.__wbg_set_invader_y(this.ptr, arg0);
+    }
+}
+/**
+*/
+export class Invaders {
+
+    __destroy_into_raw() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_invaders_free(ptr);
+    }
+    /**
+    * @returns {boolean}
+    */
+    all_killed() {
+        var ret = wasm.invaders_all_killed(this.ptr);
+        return ret !== 0;
+    }
+    /**
+    * @returns {boolean}
+    */
+    reached_bottom() {
+        var ret = wasm.invaders_reached_bottom(this.ptr);
+        return ret !== 0;
+    }
+}
+/**
+*/
 export class Player {
 
+    __destroy_into_raw() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_player_free(ptr);
+    }
+    /**
+    */
+    left() {
+        wasm.player_left(this.ptr);
+    }
+    /**
+    */
+    right() {
+        wasm.player_right(this.ptr);
+    }
+    /**
+    * @returns {boolean}
+    */
+    shoot() {
+        var ret = wasm.player_shoot(this.ptr);
+        return ret !== 0;
+    }
+}
+/**
+*/
+export class Render {
+
     static __wrap(ptr) {
-        const obj = Object.create(Player.prototype);
+        const obj = Object.create(Render.prototype);
         obj.ptr = ptr;
 
         return obj;
@@ -36,52 +141,31 @@ export class Player {
 
     free() {
         const ptr = this.__destroy_into_raw();
-        wasm.__wbg_player_free(ptr);
+        wasm.__wbg_render_free(ptr);
     }
     /**
-    * @returns {number}
-    */
-    get x() {
-        var ret = wasm.__wbg_get_player_x(this.ptr);
-        return ret >>> 0;
-    }
-    /**
-    * @param {number} arg0
-    */
-    set x(arg0) {
-        wasm.__wbg_set_player_x(this.ptr, arg0);
-    }
-    /**
-    * @returns {number}
-    */
-    get y() {
-        var ret = wasm.__wbg_get_player_y(this.ptr);
-        return ret >>> 0;
-    }
-    /**
-    * @param {number} arg0
-    */
-    set y(arg0) {
-        wasm.__wbg_set_player_y(this.ptr, arg0);
-    }
-    /**
-    * @returns {Player}
+    * @returns {Render}
     */
     static new() {
-        var ret = wasm.player_new();
-        return Player.__wrap(ret);
+        var ret = wasm.render_new();
+        return Render.__wrap(ret);
+    }
+    /**
+    * @returns {boolean}
+    */
+    detect_hits() {
+        var ret = wasm.render_detect_hits(this.ptr);
+        return ret !== 0;
+    }
+    /**
+    */
+    tick() {
+        wasm.render_tick(this.ptr);
     }
 }
 /**
 */
 export class Shot {
-
-    static __wrap(ptr) {
-        const obj = Object.create(Shot.prototype);
-        obj.ptr = ptr;
-
-        return obj;
-    }
 
     __destroy_into_raw() {
         const ptr = this.ptr;
@@ -134,24 +218,16 @@ export class Shot {
         wasm.__wbg_set_shot_exploding(this.ptr, arg0);
     }
     /**
-    * @returns {number}
     */
-    get timer() {
-        var ret = wasm.__wbg_get_shot_timer(this.ptr);
-        return ret >>> 0;
+    explode() {
+        wasm.shot_explode(this.ptr);
     }
     /**
-    * @param {number} arg0
+    * @returns {boolean}
     */
-    set timer(arg0) {
-        wasm.__wbg_set_shot_timer(this.ptr, arg0);
-    }
-    /**
-    * @returns {Shot}
-    */
-    static new() {
-        var ret = wasm.shot_new();
-        return Shot.__wrap(ret);
+    dead() {
+        var ret = wasm.shot_dead(this.ptr);
+        return ret !== 0;
     }
 }
 

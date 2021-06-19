@@ -1,14 +1,31 @@
+use wasm_bindgen::prelude::*;
+use std::{cmp::max, time::Duration};
+use rusty_time::prelude::Timer;
+
 use crate::{NUM_COLS, NUM_ROWS, frame::{Frame, Drawable}};
 
-pub struct Invader {
+#[wasm_bindgen]
+struct Invader {
     pub x: usize,
     pub y: usize,
 }
 
+#[wasm_bindgen]
 pub struct Invaders {
-    pub army: Vec<Invader>,
-    timer: usize,
+    army: Vec<Invader>,
+    timer: Timer,
     direction: i32,
+}
+
+#[wasm_bindgen]
+impl Invaders {
+    pub fn all_killed(&self) -> bool {
+        self.army.is_empty()
+    }
+
+    pub fn reached_bottom(&self) -> bool {
+        self.army.iter().map(|invader| invader.y).max().unwrap_or(0) >= NUM_ROWS - 2
+    }
 }
 
 impl Invaders {
@@ -25,16 +42,16 @@ impl Invaders {
         }
         Self {
             army,
-            timer: 0,
+            timer: Timer::from_millis(2000),
             direction: 1,
         }
     }
 
-    pub fn update(&mut self, delta: usize) -> bool {
-        self.timer = delta;
+    pub fn update(&mut self, delta: Duration) -> bool {
+        self.timer.update(delta);
         
-        if self.timer > 1000 {
-            self.timer = 0;
+        if self.timer.ready {
+            self.timer.reset();
 
             let mut downwards = false;
             if self.direction == -1 {
@@ -54,6 +71,8 @@ impl Invaders {
             
             for invader in self.army.iter_mut() {
                 if downwards {
+                    let new_duration = max(self.timer.duration.as_millis() - 250, 250);
+                    self.timer = Timer::from_millis(new_duration as u64);
                     invader.y += 1;
                 } else {
                     invader.x = ((invader.x as i32) + self.direction) as usize;
@@ -64,14 +83,6 @@ impl Invaders {
         } else {
             false
         }
-    }
-
-    pub fn all_killed(&self) -> bool {
-        self.army.is_empty()
-    }
-
-    pub fn reached_bottom(&self) -> bool {
-        self.army.iter().map(|invader| invader.y).max().unwrap_or(0) >= NUM_ROWS - 2
     }
 
     pub fn kill_invader_at(&mut self, x: usize, y: usize) -> bool {
@@ -87,7 +98,7 @@ impl Invaders {
 impl Drawable for Invaders {
     fn draw(&self, frame: &mut Frame) {
         for invader in self.army.iter() {
-            frame[invader.x][invader.y] = if self.timer > 0 && self.timer <= 100 {
+            frame[invader.x][invader.y] = if self.timer.time_left.as_secs_f32() / self.timer.duration.as_secs_f32() > 0.5 {
                 "x"
             } else {
                 "+"
