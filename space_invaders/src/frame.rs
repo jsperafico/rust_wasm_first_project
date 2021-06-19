@@ -1,5 +1,5 @@
 use wasm_bindgen::prelude::*;
-use std::time::Instant;
+use std::{fmt, time::Instant};
 
 use crate::{NUM_COLS, NUM_ROWS, player::Player, invaders::Invaders};
 
@@ -45,6 +45,10 @@ impl Render {
         }
     }
 
+    pub fn render(&self) -> String {
+        self.to_string()
+    }
+
     pub fn detect_hits(&mut self) -> bool {
         self.player.detect_hits(&mut self.invaders)
     }
@@ -62,5 +66,28 @@ impl Render {
         self.invaders.draw(&mut next);
 
         self.frame = next;
+    }
+}
+
+impl fmt::Display for Render {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        for line in &self.frame {
+            for cell in line {
+                write!(f, "{}", cell)?;
+            }
+            write!(f, "\n")?;
+        }
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    pub fn validate_render_creation_successfully() {
+        let r = Render::new();
+        println!("{}", r.render());
     }
 }

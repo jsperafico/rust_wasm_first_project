@@ -33,7 +33,6 @@
                 const div = document.getElementById('game1');
                 const h1 = document.getElementsByTagName('h1')[0];
                 const universe = Universe.new();
-
                 const times = [];
 
                 function renderGameOfLife(timestamp) {
@@ -42,9 +41,8 @@
                         times.shift();
                     }
                     times.push(now);
+
                     h1.innerHTML = 'FPS: ' + times.length;
-
-
                     div.textContent = universe.render(), 'text/html';
                     universe.tick();
 
@@ -55,13 +53,13 @@
             runGameOfLife();
         </script>
         <script type='module'>
-            import init, {Player, Shot} from './package/space_invaders.js';
+            import init, {Render} from './package/space_invaders.js';
 
             async function runSpaceInvaders() {
                 await init();
-                
                 const h2 = document.getElementsByTagName('h2')[0];
                 const div = document.getElementById('game2');
+                const render = Render.new();
                 const times = [];
 
                 function renderSpaceInvaders(timestamp) {
@@ -72,7 +70,8 @@
                     times.push(now);
 
                     h2.innerHTML = 'FPS: ' + times.length;
-                    div.innerHTML = j;
+                    div.textContent = render.render();
+                    render.tick();
 
                     window.requestAnimationFrame(renderSpaceInvaders);
                 }
