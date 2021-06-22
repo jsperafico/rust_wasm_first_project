@@ -1,5 +1,5 @@
 use wasm_bindgen::prelude::*;
-use std::{fmt, time::Instant};
+use std::fmt;
 
 use crate::{NUM_COLS, NUM_ROWS, player::Player, invaders::Invaders};
 
@@ -25,7 +25,6 @@ pub trait Drawable {
 pub struct Render {
     player: Player,
     invaders: Invaders,
-    instant: Instant,
     frame: Frame,
 }
 
@@ -34,13 +33,11 @@ impl Render {
     pub fn new() -> Self {
         let player = Player::new();
         let invaders = Invaders::new();
-        let instant = Instant::now();
         let frame = new_frame();
 
         Self {
             player,
             invaders,
-            instant,
             frame
         }
     }
@@ -54,13 +51,10 @@ impl Render {
     }
 
     pub fn tick(&mut self) {
-        let delta = self.instant.elapsed();
-        self.instant = Instant::now();
-
         let mut next = new_frame();
 
-        self.player.update(delta);
-        self.invaders.update(delta);
+        self.player.update();
+        self.invaders.update();
 
         self.player.draw(&mut next);
         self.invaders.draw(&mut next);

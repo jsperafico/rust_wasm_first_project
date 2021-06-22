@@ -1,5 +1,4 @@
 use wasm_bindgen::prelude::*;
-use std::time::Duration;
 
 use crate::{NUM_COLS, NUM_ROWS, frame::{Drawable, Frame}, shot::Shot, invaders::Invaders};
 
@@ -39,9 +38,9 @@ impl Player {
         }
     }
 
-    pub fn update(&mut self, delta: Duration) {
+    pub fn update(&mut self) {
         for shot in self.shots.iter_mut() {
-            shot.update(delta);
+            shot.update();
         }
         self.shots.retain(|shot| !shot.dead());
     }

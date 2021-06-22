@@ -1,6 +1,6 @@
 use wasm_bindgen::prelude::*;
 use std::{cmp::max, time::Duration};
-use rusty_time::prelude::Timer;
+use wasm_timer::Instant;
 
 use crate::{NUM_COLS, NUM_ROWS, frame::{Frame, Drawable}};
 
@@ -13,7 +13,8 @@ struct Invader {
 #[wasm_bindgen]
 pub struct Invaders {
     army: Vec<Invader>,
-    timer: Timer,
+    duration: Duration,
+    time: Instant,
     direction: i32,
 }
 
@@ -42,17 +43,15 @@ impl Invaders {
         }
         Self {
             army,
-            timer: Timer::from_millis(2000),
+            duration: Duration::from_secs(2),
+            time: Instant::now(),
             direction: 1,
         }
     }
 
-    pub fn update(&mut self, delta: Duration) -> bool {
-        self.timer.update(delta);
-        
-        if self.timer.ready {
-            self.timer.reset();
+    pub fn update(&mut self) -> bool {
 
+        if self.time.elapsed() >= self.duration {
             let mut downwards = false;
             if self.direction == -1 {
                 let min = self.army.iter().map(|invader| invader.x).min().unwrap_or(0);
@@ -71,13 +70,18 @@ impl Invaders {
             
             for invader in self.army.iter_mut() {
                 if downwards {
-                    let new_duration = max(self.timer.duration.as_millis() - 250, 250);
-                    self.timer = Timer::from_millis(new_duration as u64);
+                    let new_duration = max(self.time.elapsed().as_millis() - 250, 250);
+                    self.duration = Duration::from_millis(new_duration as u64);
                     invader.y += 1;
                 } else {
+                    if self.duration.as_secs() != 2 {
+                        self.duration = Duration::from_secs(2);
+                    }
                     invader.x = ((invader.x as i32) + self.direction) as usize;
                 }
             }
+
+            self.time = Instant::now();
 
             true
         } else {
@@ -97,8 +101,9 @@ impl Invaders {
 
 impl Drawable for Invaders {
     fn draw(&self, frame: &mut Frame) {
+        let remaining = self.duration - self.time.elapsed();
         for invader in self.army.iter() {
-            frame[invader.x][invader.y] = if self.timer.time_left.as_secs_f32() / self.timer.duration.as_secs_f32() > 0.5 {
+            frame[invader.x][invader.y] = if remaining.as_secs_f32() > 0.5 {
                 "x"
             } else {
                 "+"
