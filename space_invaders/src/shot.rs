@@ -21,7 +21,7 @@ impl Shot {
     }
 
     pub fn dead(&self) -> bool {
-        (self.exploding && self.time.elapsed() >= self.duration) || self.y == 0
+        (self.exploding && self.time.elapsed() >= self.duration) || self.x == 0
     }
 }
 
@@ -38,7 +38,7 @@ impl Shot {
     
     pub fn update(&mut self) {
         if self.time.elapsed() >= self.duration && !self.exploding {
-            self.y -= if self.y > 0 { 1 } else { 0 };
+            self.x -= if self.x > 0 { 1 } else { 0 };
             self.time = Instant::now();
         }
     }

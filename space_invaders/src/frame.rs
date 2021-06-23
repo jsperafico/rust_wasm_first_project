@@ -6,15 +6,15 @@ use crate::{NUM_COLS, NUM_ROWS, player::Player, invaders::Invaders};
 pub type Frame = Vec<Vec<& 'static str>>;
 
 pub fn new_frame() -> Frame {
-    let mut cols = Vec::with_capacity(NUM_COLS);
-    for _ in 0..NUM_COLS {
-        let mut col = Vec::with_capacity(NUM_ROWS);
-        for _ in 0..NUM_ROWS {
-            col.push(" ");
+    let mut rows = Vec::with_capacity(NUM_ROWS);
+    for _ in 0..NUM_ROWS {
+        let mut cols = Vec::with_capacity(NUM_COLS);
+        for _ in 0..NUM_COLS {
+            cols.push(" ");
         }
-        cols.push(col);
+        rows.push(cols);
     }
-    cols
+    rows
 }
 
 pub trait Drawable {
@@ -66,8 +66,8 @@ impl Render {
 impl fmt::Display for Render {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         for line in &self.frame {
-            for cell in line {
-                write!(f, "{}", cell)?;
+            for col in line {
+                write!(f, "{}", col)?;
             }
             write!(f, "\n")?;
         }
@@ -78,10 +78,21 @@ impl fmt::Display for Render {
 #[cfg(test)]
 mod test {
     use super::*;
+    use std::{thread, time::Duration};
 
     #[test]
     pub fn validate_render_creation_successfully() {
-        let r = Render::new();
+        let mut r = Render::new();
+        r.tick();
+        r.player.shoot();
+        thread::sleep(Duration::from_secs(2));
+        r.tick();
+        r.player.left();
+        r.player.left();
+        for _ in 0..5 {
+            r.tick(); 
+            thread::sleep(Duration::from_secs(2));
+        }
         println!("{}", r.render());
     }
 }

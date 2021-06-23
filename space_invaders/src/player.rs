@@ -12,16 +12,16 @@ pub struct Player {
 #[wasm_bindgen]
 impl Player {
     pub fn left(&mut self) {
-        self.x -= if self.x > 0 { 1 } else { 0 }
+        self.y -= if self.y > 0 { 1 } else { 0 }
     }
 
     pub fn right(&mut self) {
-        self.x += if self.x < NUM_COLS { 1 } else { 0 }
+        self.y += if self.y < NUM_COLS { 1 } else { 0 }
     }
 
     pub fn shoot(&mut self) -> bool {
         if self.shots.len() < 2 {
-            self.shots.push(Shot::new(self.x, self.y - 2));
+            self.shots.push(Shot::new(self.x - 2, self.y));
             true
         } else {
             false
@@ -32,8 +32,8 @@ impl Player {
 impl Player {
     pub fn new() -> Self {
         Self {
-            x: NUM_COLS / 2,
-            y: NUM_ROWS - 1,
+            x: NUM_ROWS - 2,
+            y: NUM_COLS / 2,
             shots: Vec::new(),
         }
     }

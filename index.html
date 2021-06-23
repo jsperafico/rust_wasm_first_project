@@ -21,8 +21,10 @@
             h2 {
                 grid-area: fps2;
             }
-            div#game2 {
+            pre#game2 {
                 grid-area: game2;
+                white-space: pre-wrap;
+                letter-spacing: .2rem;
             }
         </style>
         <script type='module'>
@@ -43,7 +45,7 @@
                     times.push(now);
 
                     h1.innerHTML = 'FPS: ' + times.length;
-                    div.textContent = universe.render(), 'text/html';
+                    // div.textContent = universe.render(), 'text/html';
                     universe.tick();
 
                     window.requestAnimationFrame(renderGameOfLife);
@@ -54,15 +56,21 @@
         </script>
         <script type='module'>
             import init, {Render} from './package/space_invaders.js';
+            String.prototype.replace('&nbsp',' ');
 
             async function runSpaceInvaders() {
                 await init();
                 const h2 = document.getElementsByTagName('h2')[0];
-                const div = document.getElementById('game2');
+                const pre = document.getElementById('game2');
                 const render = Render.new();
                 const times = [];
 
                 function renderSpaceInvaders(timestamp) {
+                    // if (render.invaders.all_killed() || render.invaders.reached_bottom()) {
+                    //     return;
+                    // }
+
+
                     const now = performance.now();
                     while (times.length > 0 && times[0] <= now - 1000) {
                         times.shift();
@@ -70,8 +78,9 @@
                     times.push(now);
 
                     h2.innerHTML = 'FPS: ' + times.length;
-                    div.textContent = render.render();
+                    pre.innerText = render.render();
                     render.tick();
+
 
                     window.requestAnimationFrame(renderSpaceInvaders);
                 }
@@ -82,8 +91,8 @@
     </header>
     <body>
         <h1>FPS:</h1>
-        <div id="game1"></div>
+        <!-- <div id="game1"></div> -->
         <h2>FPS:</h2>
-        <div id="game2"></div>
+        <pre id="game2"></pre>
     </body>
 </html>
