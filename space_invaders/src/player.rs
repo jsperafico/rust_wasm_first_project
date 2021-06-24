@@ -17,11 +17,11 @@ impl Player {
     }
 
     pub fn left(&mut self) {
-        self.y += if self.y > 0 { 1 } else { 0 }
+        self.y -= if self.y > 0 { 1 } else { 0 }
     }
 
     pub fn right(&mut self) {
-        self.y -= if self.y < NUM_COLS { 1 } else { 0 }
+        self.y += if self.y < NUM_COLS - 1 { 1 } else { 0 }
     }
 
     pub fn shoot(&mut self) {

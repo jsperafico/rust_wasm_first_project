@@ -29,7 +29,7 @@ impl Invaders {
         }
         Self {
             army,
-            duration: Duration::from_secs(2),
+            duration: Duration::from_secs(1),
             time: Instant::now(),
             direction: 1,
         }
@@ -67,9 +67,6 @@ impl Invaders {
                     self.duration = Duration::from_millis(new_duration as u64);
                     invader.x += 1;
                 } else {
-                    if self.duration.as_secs() != 2 {
-                        self.duration = Duration::from_secs(2);
-                    }
                     invader.y = ((invader.y as i32) + self.direction) as usize;
                 }
             }

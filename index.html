@@ -45,7 +45,7 @@
                     times.push(now);
 
                     h1.innerHTML = 'FPS: ' + times.length;
-                    // div.textContent = universe.render(), 'text/html';
+                    div.textContent = universe.render(), 'text/html';
                     universe.tick();
 
                     window.requestAnimationFrame(renderGameOfLife);
@@ -70,10 +70,10 @@
                         window.removeEventListener('keyup', keyup);
                     }
 
-                    if (event.code === 'ArrowRight') {
+                    if (event.code === 'ArrowLeft') {
                         engine.input(Action.LEFT);
                     }
-                    if (event.code === 'ArrowLeft') {
+                    if (event.code === 'ArrowRight') {
                         engine.input(Action.RIGHT);
                     }
                     if (event.code === 'Space') {
@@ -107,7 +107,7 @@
     </header>
     <body>
         <h1>FPS:</h1>
-        <!-- <div id="game1"></div> -->
+        <div id="game1"></div>
         <h2>FPS:</h2>
         <pre id="game2"></pre>
     </body>
