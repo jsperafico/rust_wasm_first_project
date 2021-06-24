@@ -1,4 +1,4 @@
-// mod engine;
+mod engine;
 mod frame;
 mod invaders;
 mod player;

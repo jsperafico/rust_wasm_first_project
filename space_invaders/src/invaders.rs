@@ -1,32 +1,18 @@
-use wasm_bindgen::prelude::*;
 use std::{cmp::max, time::Duration};
 use wasm_timer::Instant;
 
 use crate::{NUM_COLS, NUM_ROWS, frame::{Frame, Drawable}};
 
-#[wasm_bindgen]
 struct Invader {
     pub x: usize,
     pub y: usize,
 }
 
-#[wasm_bindgen]
 pub struct Invaders {
     army: Vec<Invader>,
     duration: Duration,
     time: Instant,
     direction: i32,
-}
-
-#[wasm_bindgen]
-impl Invaders {
-    pub fn all_killed(&self) -> bool {
-        self.army.is_empty()
-    }
-
-    pub fn reached_bottom(&self) -> bool {
-        self.army.iter().map(|invader| invader.x).max().unwrap_or(0) >= NUM_ROWS - 3
-    }
 }
 
 impl Invaders {
@@ -47,6 +33,14 @@ impl Invaders {
             time: Instant::now(),
             direction: 1,
         }
+    }
+
+    pub fn all_killed(&self) -> bool {
+        self.army.is_empty()
+    }
+
+    pub fn reached_bottom(&self) -> bool {
+        self.army.iter().map(|invader| invader.x).max().unwrap_or(0) >= NUM_ROWS - 3
     }
 
     pub fn update(&mut self) -> bool {

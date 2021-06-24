@@ -67,115 +67,16 @@ function handleError(f, args) {
 }
 /**
 */
-export class Invader {
-
-    __destroy_into_raw() {
-        const ptr = this.ptr;
-        this.ptr = 0;
-
-        return ptr;
-    }
-
-    free() {
-        const ptr = this.__destroy_into_raw();
-        wasm.__wbg_invader_free(ptr);
-    }
-    /**
-    * @returns {number}
-    */
-    get x() {
-        var ret = wasm.__wbg_get_invader_x(this.ptr);
-        return ret >>> 0;
-    }
-    /**
-    * @param {number} arg0
-    */
-    set x(arg0) {
-        wasm.__wbg_set_invader_x(this.ptr, arg0);
-    }
-    /**
-    * @returns {number}
-    */
-    get y() {
-        var ret = wasm.__wbg_get_invader_y(this.ptr);
-        return ret >>> 0;
-    }
-    /**
-    * @param {number} arg0
-    */
-    set y(arg0) {
-        wasm.__wbg_set_invader_y(this.ptr, arg0);
-    }
-}
+export const Action = Object.freeze({ LEFT:0,"0":"LEFT",RIGHT:1,"1":"RIGHT",SHOOT:2,"2":"SHOOT", });
 /**
 */
-export class Invaders {
-
-    __destroy_into_raw() {
-        const ptr = this.ptr;
-        this.ptr = 0;
-
-        return ptr;
-    }
-
-    free() {
-        const ptr = this.__destroy_into_raw();
-        wasm.__wbg_invaders_free(ptr);
-    }
-    /**
-    * @returns {boolean}
-    */
-    all_killed() {
-        var ret = wasm.invaders_all_killed(this.ptr);
-        return ret !== 0;
-    }
-    /**
-    * @returns {boolean}
-    */
-    reached_bottom() {
-        var ret = wasm.invaders_reached_bottom(this.ptr);
-        return ret !== 0;
-    }
-}
+export const Result = Object.freeze({ WIN:0,"0":"WIN",LOSE:1,"1":"LOSE",NONE:2,"2":"NONE", });
 /**
 */
-export class Player {
-
-    __destroy_into_raw() {
-        const ptr = this.ptr;
-        this.ptr = 0;
-
-        return ptr;
-    }
-
-    free() {
-        const ptr = this.__destroy_into_raw();
-        wasm.__wbg_player_free(ptr);
-    }
-    /**
-    */
-    left() {
-        wasm.player_left(this.ptr);
-    }
-    /**
-    */
-    right() {
-        wasm.player_right(this.ptr);
-    }
-    /**
-    * @returns {boolean}
-    */
-    shoot() {
-        var ret = wasm.player_shoot(this.ptr);
-        return ret !== 0;
-    }
-}
-/**
-*/
-export class Render {
+export class Engine {
 
     static __wrap(ptr) {
-        const obj = Object.create(Render.prototype);
+        const obj = Object.create(Engine.prototype);
         obj.ptr = ptr;
 
         return obj;
@@ -190,14 +91,32 @@ export class Render {
 
     free() {
         const ptr = this.__destroy_into_raw();
-        wasm.__wbg_render_free(ptr);
+        wasm.__wbg_engine_free(ptr);
     }
     /**
-    * @returns {Render}
+    * @returns {Engine}
     */
     static new() {
-        var ret = wasm.render_new();
-        return Render.__wrap(ret);
+        var ret = wasm.engine_new();
+        return Engine.__wrap(ret);
+    }
+    /**
+    * @param {number} action
+    */
+    input(action) {
+        wasm.engine_input(this.ptr, action);
+    }
+    /**
+    * @returns {number}
+    */
+    is_endgame() {
+        var ret = wasm.engine_is_endgame(this.ptr);
+        return ret >>> 0;
+    }
+    /**
+    */
+    tick() {
+        wasm.engine_tick(this.ptr);
     }
     /**
     * @returns {string}
@@ -205,7 +124,7 @@ export class Render {
     render() {
         try {
             const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            wasm.render_render(retptr, this.ptr);
+            wasm.engine_render(retptr, this.ptr);
             var r0 = getInt32Memory0()[retptr / 4 + 0];
             var r1 = getInt32Memory0()[retptr / 4 + 1];
             return getStringFromWasm0(r0, r1);
@@ -213,85 +132,6 @@ export class Render {
             wasm.__wbindgen_add_to_stack_pointer(16);
             wasm.__wbindgen_free(r0, r1);
         }
-    }
-    /**
-    * @returns {boolean}
-    */
-    detect_hits() {
-        var ret = wasm.render_detect_hits(this.ptr);
-        return ret !== 0;
-    }
-    /**
-    */
-    tick() {
-        wasm.render_tick(this.ptr);
-    }
-}
-/**
-*/
-export class Shot {
-
-    __destroy_into_raw() {
-        const ptr = this.ptr;
-        this.ptr = 0;
-
-        return ptr;
-    }
-
-    free() {
-        const ptr = this.__destroy_into_raw();
-        wasm.__wbg_shot_free(ptr);
-    }
-    /**
-    * @returns {number}
-    */
-    get x() {
-        var ret = wasm.__wbg_get_shot_x(this.ptr);
-        return ret >>> 0;
-    }
-    /**
-    * @param {number} arg0
-    */
-    set x(arg0) {
-        wasm.__wbg_set_shot_x(this.ptr, arg0);
-    }
-    /**
-    * @returns {number}
-    */
-    get y() {
-        var ret = wasm.__wbg_get_shot_y(this.ptr);
-        return ret >>> 0;
-    }
-    /**
-    * @param {number} arg0
-    */
-    set y(arg0) {
-        wasm.__wbg_set_shot_y(this.ptr, arg0);
-    }
-    /**
-    * @returns {boolean}
-    */
-    get exploding() {
-        var ret = wasm.__wbg_get_shot_exploding(this.ptr);
-        return ret !== 0;
-    }
-    /**
-    * @param {boolean} arg0
-    */
-    set exploding(arg0) {
-        wasm.__wbg_set_shot_exploding(this.ptr, arg0);
-    }
-    /**
-    */
-    explode() {
-        wasm.shot_explode(this.ptr);
-    }
-    /**
-    * @returns {boolean}
-    */
-    dead() {
-        var ret = wasm.shot_dead(this.ptr);
-        return ret !== 0;
     }
 }
 

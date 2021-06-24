@@ -55,21 +55,38 @@
             runGameOfLife();
         </script>
         <script type='module'>
-            import init, {Render} from './package/space_invaders.js';
+            import init, {Engine, Result, Action} from './package/space_invaders.js';
             String.prototype.replace('&nbsp',' ');
 
             async function runSpaceInvaders() {
                 await init();
                 const h2 = document.getElementsByTagName('h2')[0];
                 const pre = document.getElementById('game2');
-                const render = Render.new();
+                const engine = Engine.new();
                 const times = [];
 
-                function renderSpaceInvaders(timestamp) {
-                    // if (render.invaders.all_killed() || render.invaders.reached_bottom()) {
-                    //     return;
-                    // }
+                const keyup = (event) => {
+                    if (engine.is_endgame() != Result.NONE) {
+                        window.removeEventListener('keyup', keyup);
+                    }
 
+                    if (event.code === 'ArrowRight') {
+                        engine.input(Action.LEFT);
+                    }
+                    if (event.code === 'ArrowLeft') {
+                        engine.input(Action.RIGHT);
+                    }
+                    if (event.code === 'Space') {
+                        engine.input(Action.SHOOT);
+                    }
+                };
+
+                window.addEventListener('keyup', keyup);
+
+                function renderSpaceInvaders(timestamp) {
+                    if (engine.is_endgame() != Result.NONE) {
+                        return;
+                    }
 
                     const now = performance.now();
                     while (times.length > 0 && times[0] <= now - 1000) {
@@ -78,9 +95,8 @@
                     times.push(now);
 
                     h2.innerHTML = 'FPS: ' + times.length;
-                    pre.innerText = render.render();
-                    render.tick();
-
+                    pre.innerText = engine.render();
+                    engine.tick();
 
                     window.requestAnimationFrame(renderSpaceInvaders);
                 }

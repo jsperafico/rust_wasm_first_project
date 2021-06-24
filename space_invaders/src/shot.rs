@@ -1,28 +1,14 @@
-use wasm_bindgen::prelude::*;
 use std::time::Duration;
 use wasm_timer::Instant;
 
 use crate::frame::{Drawable, Frame};
 
-#[wasm_bindgen]
 pub struct Shot {
     pub x: usize,
     pub y: usize,
     pub exploding: bool,
     duration: Duration,
     time: Instant,
-}
-
-#[wasm_bindgen]
-impl Shot {
-    pub fn explode(&mut self) {
-        self.exploding = true;
-        self.duration = Duration::from_millis(250);
-    }
-
-    pub fn dead(&self) -> bool {
-        (self.exploding && self.time.elapsed() >= self.duration) || self.x == 0
-    }
 }
 
 impl Shot {
@@ -34,6 +20,15 @@ impl Shot {
             duration: Duration::from_millis(50),
             time: Instant::now(),
         }
+    }
+
+    pub fn explode(&mut self) {
+        self.exploding = true;
+        self.duration = Duration::from_millis(250);
+    }
+
+    pub fn dead(&self) -> bool {
+        (self.exploding && self.time.elapsed() >= self.duration) || self.x == 0
     }
     
     pub fn update(&mut self) {
