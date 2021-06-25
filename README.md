@@ -8,7 +8,6 @@ Install `wasm-pack` by using:
 cargo install wasm-pack
 ```
 
-
 To generate vanilla js code, being on `root` folder, please use the following commands:
 ```
 wasm-pack build --no-typescript --target web --out-dir package space_invaders
@@ -32,4 +31,6 @@ Make sure to use:
 </script>
 ```
 
-More info check [the official documentation here](https://rustwasm.github.io/wasm-bindgen/examples/without-a-bundler.html).
+More info check:
+- [Official WASM Documentation](https://rustwasm.github.io/wasm-bindgen/examples/without-a-bundler.html)
+- [Google Web Components](https://developers.google.com/web/fundamentals/web-components/customelements)
