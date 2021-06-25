@@ -7,15 +7,26 @@ class FrameRate extends AbstractComponent {
         super();
     }
 
-    static get observedAttributes() {
-        return ['amount', 'identifier'];
+    connectedCallback() {
+        super.connectedCallback();
+
+        this.#_unsubscribe = ComponentEvent.subscribe(this.#_identifier, (data) => {
+            if (typeof(data) !== ' number') {
+                throw new Error(`Unable to process the following '${data}'`);
+            }
+
+            this.amount = data;
+        });
     }
 
-    get amount() {
-        return this.#_amount;
+    attributeChangedCallback(attr, oldValue, newValue) {
+        super.attributeChangedCallback(attr, oldValue, newValue);
+        if (attr == 'amount') {
+            this.render();
+        }
     }
 
-    set amount(value) {
+    render() {
         let amount = this.getElementsByTagName('span');
         if (amount.length == 0) {
             let span = document.createElement('span');
@@ -25,7 +36,19 @@ class FrameRate extends AbstractComponent {
         } else {
             amount = amount[0];
         }
-        amount.innerText = value;
+        amount.innerText = this.amount;
+    }
+    
+
+    static get observedAttributes() {
+        return ['amount', 'identifier'];
+    }
+
+    get amount() {
+        return this.#_amount;
+    }
+
+    set amount(value) {
         this.#_amount = value;
     }
 
@@ -35,14 +58,6 @@ class FrameRate extends AbstractComponent {
 
     set identifier(value) {
         this.#_identifier = value;
-
-        this.#_unsubscribe = ComponentEvent.subscribe(this.#_identifier, (data) => {
-            if (typeof(data) !== ' number') {
-                throw new Error(`Unable to process the following '${data}'`);
-            }
-
-            this.amount = data;
-        });
     }
 
     disconnectedCallback() {

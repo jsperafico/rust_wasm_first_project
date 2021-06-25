@@ -19,6 +19,8 @@ class AbstractComponent extends HTMLElement {
             this[attr] = newValue;
         }
     }
+
+    render() {}
 }
 
 const ComponentEvent = (() => {
