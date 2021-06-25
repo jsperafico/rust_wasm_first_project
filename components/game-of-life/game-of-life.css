@@ -1,0 +1,6 @@
+pre {
+    white-space: pre-wrap;
+    letter-spacing: .2rem;
+    background-color: darkgray;
+    color: white;
+}

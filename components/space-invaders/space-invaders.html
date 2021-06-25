@@ -1,0 +1,11 @@
+<script src="../common.js"></script>
+<script type="module">
+    import SpaceInvader from './space-invaders.js';
+    ComponentFactory.register(SpaceInvader);
+</script>
+
+<template id="space-invaders">
+    <pre><slot name="canvas"></slot></pre>
+</template>
+
+<space-invaders></space-invaders>

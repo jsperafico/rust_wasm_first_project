@@ -3,16 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WASM + WebComponent = Perfect</title>
+    <title>WASM + WebComponent = Perfect?</title>
+    <link rel="stylesheet" href="main.css">
     <script src="./components/common.js"></script>
-    <script src="./components/frame-rate/frame-rate.js"></script>
-    <script>
-        ComponentFactory.register(FrameRate);
+    <script type="module">
+        import FrameRate from './components/frame-rate/frame-rate.js';
+        await ComponentFactory.register(FrameRate);
+    </script>
+    <script type="module">
+        import GameOfLife from './components/game-of-life/game-of-life.js';
+        await ComponentFactory.register(GameOfLife);
+    </script>
+    <script type="module">
+        import SpaceInvader from './components/space-invaders/space-invaders.js';
+        await ComponentFactory.register(SpaceInvader);
     </script>
 </head>
 <body>
-    <frame-rate amount="10" identifier="game-of-life"></frame-rate>
-    <hr/>
+    <section>
+        <frame-rate amount="10" identifier="game-of-life"></frame-rate>
+        <game-of-life identifier="game-of-life">
+            <span slot="canvas"></span>
+        </game-of-life>
+    </section>
+    <section>
     <frame-rate amount="20" identifier="space-invaders"></frame-rate>
+    <space-invaders identifier="space-invaders">
+        <span slot="canvas"></span>
+    </space-invaders>
+    </section>
 </body>
 </html>

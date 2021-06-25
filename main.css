@@ -1,0 +1,23 @@
+body {
+    padding: 5%;
+    width: 89%;
+    height: 89%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-flow: row;
+    gap: 2rem;
+}
+
+body > section {
+    display: grid;
+    grid-template-rows: 1fr 5fr;
+    grid-auto-flow: column;
+}
+
+body > section > frame-rate {
+    text-align: center;
+}
+
+body > section > space-invaders {
+    text-align: center;
+}

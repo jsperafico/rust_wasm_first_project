@@ -1,21 +1,26 @@
-class FrameRate extends AbstractComponent {
+export default class FrameRate extends AbstractComponent {
     #_amount;
     #_identifier;
     #_unsubscribe;
+    #_span;
 
     constructor() {
         super();
+
+        let span = document.createElement('span');
+        span['slot'] = 'amount';
+        this.appendChild(span);
+        this.#_span = span;
     }
 
     connectedCallback() {
         super.connectedCallback();
 
         this.#_unsubscribe = ComponentEvent.subscribe(this.#_identifier, (data) => {
-            if (typeof(data) !== ' number') {
+            if (typeof(data) !== "number") {
                 throw new Error(`Unable to process the following '${data}'`);
             }
-
-            this.amount = data;
+            this.setAttribute('amount', data);
         });
     }
 
@@ -27,19 +32,9 @@ class FrameRate extends AbstractComponent {
     }
 
     render() {
-        let amount = this.getElementsByTagName('span');
-        if (amount.length == 0) {
-            let span = document.createElement('span');
-            span['slot'] = 'amount';
-            this.appendChild(span);
-            amount = span;
-        } else {
-            amount = amount[0];
-        }
-        amount.innerText = this.amount;
+        this.#_span.innerText = this.amount;
     }
     
-
     static get observedAttributes() {
         return ['amount', 'identifier'];
     }

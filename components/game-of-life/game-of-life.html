@@ -1,0 +1,11 @@
+<script src="../common.js"></script>
+<script type="module">
+    import GameOfLife from './game-of-life.js';
+    ComponentFactory.register(GameOfLife);
+</script>
+
+<template id="game-of-life">
+    <pre><slot name="canvas"></slot></pre>
+</template>
+
+<game-of-life></game-of-life>
