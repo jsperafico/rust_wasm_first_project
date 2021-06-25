@@ -1,0 +1,11 @@
+<script src="../common.js"></script>
+<script type="module">
+    import FrameRate from './frame-rate.js';
+    ComponentFactory.register(FrameRate);
+</script>
+
+<template id="frame-rate">
+    <h1>FPS: <slot name="amount">Default</slot></h1>
+</template>
+
+<frame-rate></frame-rate>
