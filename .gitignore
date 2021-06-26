@@ -6,7 +6,7 @@ Cargo.lock
 **/*.rs.bk
 
 # Added by cargo
-*/target
+**/target
 
 */.gitignore
 */package.json
