@@ -1,3 +1,4 @@
+// https://developers.google.com/web/fundamentals/web-components/best-practices?hl=ja
 class AbstractComponent extends HTMLElement {
     constructor() {
         super();
