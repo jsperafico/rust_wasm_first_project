@@ -20,7 +20,6 @@ export default class SpaceInvaders extends AbstractComponent {
     }
 
     connectedCallback() {
-        super.connectedCallback();
         this.keyBind();
 
         // Run the animation loop.

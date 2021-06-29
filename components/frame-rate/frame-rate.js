@@ -14,8 +14,6 @@ export default class FrameRate extends AbstractComponent {
     }
 
     connectedCallback() {
-        super.connectedCallback();
-
         this.#_unsubscribe = ComponentEvent.subscribe(this.#_identifier, (data) => {
             if (typeof(data) !== "number") {
                 throw new Error(`Unable to process the following '${data}'`);

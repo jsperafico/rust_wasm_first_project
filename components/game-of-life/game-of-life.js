@@ -19,8 +19,6 @@ export default class GameOfLife extends AbstractComponent {
     }
 
     connectedCallback() {
-        super.connectedCallback();
-
         // Run the animation loop.
         let animate = () => {
             requestAnimationFrame(animate);

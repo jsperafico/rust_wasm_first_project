@@ -6,9 +6,7 @@ class AbstractComponent extends HTMLElement {
         if (this.constructor == AbstractComponent) {
             throw new Error(`Abstract classes can't be initialized.`);
         }
-    }
 
-    connectedCallback() {
         let shadow = this.attachShadow({mode: 'open'});
         let [template, css] = ComponentFactory.getComponent(this.tagName.toLocaleLowerCase());
         shadow.appendChild(css.cloneNode(true));
