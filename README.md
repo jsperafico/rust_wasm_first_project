@@ -10,8 +10,9 @@ cargo install wasm-pack
 
 To generate vanilla js code, being on `root` folder, please use the following commands:
 ```
-wasm-pack build --no-typescript --target web --out-dir package ./rust/space_invaders
-wasm-pack build --no-typescript --target web --out-dir package ./rust/game_of_life
+wasm-pack build --no-typescript --target web --out-dir ../package ./rust/space_invaders
+wasm-pack build --no-typescript --target web --out-dir ../package ./rust/game_of_life
+wasm-pack build --no-typescript --target web --out-dir ../package ./rust/socket
 ```
 
 Possible targets:
