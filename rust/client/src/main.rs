@@ -21,11 +21,11 @@ async fn main() -> Result<()> {
         true
     )?;
 
-    let (endpoint, _, mut incoming_messages, _) = peer_peer.new_endpoint().await?;
+    let (endpoint, _, _, _) = peer_peer.new_endpoint().await?;
     println!("Listening on: {:?}", endpoint.socket_addr());
 
     let server: SocketAddr = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(a, b, c, d), port));
-    endpoint.connect_to(&server).await?;
+    let (mut send_stream, mut receive_stream) = endpoint.open_bidirectional_stream(&server).await?;
     println!("Connected with server");
 
     let mut handles = Vec::new();
@@ -33,22 +33,29 @@ async fn main() -> Result<()> {
     handles.push(tokio::spawn(async move {
         println!("Send PING");
         let msg = Bytes::from(PING);
-        endpoint.send_message(msg.clone(), &server).await.unwrap();
+        send_stream.send_user_msg(msg.clone()).await.unwrap();
+        send_stream.finish().await.unwrap();
         
-        println!("Send QUIT");
-        endpoint.send_message(Bytes::from(QUIT).clone(), &server).await.unwrap();
+        // println!("Send QUIT");
+        // send_stream.send_user_msg(Bytes::from(QUIT).clone()).await.unwrap();
     }));
 
     handles.push(tokio::spawn(async move {
-        while let Some((socket_addr, bytes)) = incoming_messages.next().await {
-            if bytes == Bytes::from(PONG) {
-                println!("Pong received");
-            } else if bytes == Bytes::from(QUIT) {
-                println!("Quit!");
-                return;
-            } else {
-                println!("Received from {:?} --> {:?}", socket_addr, bytes);
-            }
+        loop {
+            match receive_stream.next().await {
+                Ok(value) => {
+                    if value == Bytes::from(PONG) {
+                        println!("Pong received");
+                    } else if value == Bytes::from(QUIT) {
+                        println!("Quit!");
+                        return;
+                    } else {
+                        println!("Received --> {:?}", value);
+                    }
+                },
+                Err(_) => {}
+            };
+            
         }
     }));
 

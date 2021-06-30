@@ -11,6 +11,7 @@ const QUIT: &str = "/quit";
 async fn process_client(endpoint: Endpoint, mut incoming_messages: IncomingMessages) -> Result<()> {
     while let Some((socket_addr, bytes)) = incoming_messages.next().await {
         if bytes == Bytes::from(PING) {
+            println!("Ping received!");
             endpoint.send_message(Bytes::from(PONG).clone(), &socket_addr).await?;
         } else if bytes == Bytes::from(QUIT) {
             println!("Quit!");
@@ -43,6 +44,7 @@ async fn main() -> Result<()> {
 
     let socket_addr = incoming_connections.next().await.unwrap();
     println!("Client '{:?}' connected", socket_addr);
+    endpoint.open_bidirectional_stream(&socket_addr).await?;
     process_client(endpoint, incoming_messages).await?;
 
     let disconnected = _disconnection_events.next().await.unwrap();
