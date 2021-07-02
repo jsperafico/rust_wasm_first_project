@@ -2,27 +2,11 @@ use std::net::{IpAddr, Ipv4Addr};
 
 use anyhow::Result;
 use bytes::Bytes;
-use qp2p::{Config, Endpoint, IncomingMessages, QuicP2p};
+use qp2p::{Config, QuicP2p};
 
 const PING: &str = "/ping";
 const PONG: &str = "/pong";
 const QUIT: &str = "/quit";
-
-async fn process_client(endpoint: Endpoint, mut incoming_messages: IncomingMessages) -> Result<()> {
-    while let Some((socket_addr, bytes)) = incoming_messages.next().await {
-        if bytes == Bytes::from(PING) {
-            println!("Ping received!");
-            endpoint.send_message(Bytes::from(PONG).clone(), &socket_addr).await?;
-        } else if bytes == Bytes::from(QUIT) {
-            println!("Quit!");
-            endpoint.send_message(Bytes::from(QUIT).clone(), &socket_addr).await?;
-            break;
-        } else {
-            println!("Received from {:?} --> {:?}", socket_addr, bytes);
-        }
-    }
-    Ok(())
-}
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -39,16 +23,38 @@ async fn main() -> Result<()> {
         true
     )?;
 
-    let (endpoint, mut incoming_connections, incoming_messages, mut _disconnection_events) = peer_peer.new_endpoint().await?;
+    let (endpoint, mut incoming_connections, mut incoming_messages, mut _disconnection_events) = peer_peer.new_endpoint().await?;
     println!("Listening on: {:?}", endpoint.socket_addr());
 
     let socket_addr = incoming_connections.next().await.unwrap();
     println!("Client '{:?}' connected", socket_addr);
-    endpoint.open_bidirectional_stream(&socket_addr).await?;
-    process_client(endpoint, incoming_messages).await?;
 
-    let disconnected = _disconnection_events.next().await.unwrap();
-    println!("Client '{:?}' disconnected", disconnected);
+    let mut handles = Vec::new();
+
+    handles.push(tokio::spawn(async move {
+        while let Some((socket_addr, bytes)) = incoming_messages.next().await {
+            if bytes == Bytes::from(PING) {
+                println!("Ping received!");
+                endpoint.send_message(Bytes::from(PONG).clone(), &socket_addr).await.unwrap();
+            } else if bytes == Bytes::from(QUIT) {
+                println!("Quit!");
+                endpoint.send_message(Bytes::from(QUIT).clone(), &socket_addr).await.unwrap();
+                break;
+            } else {
+                println!("Received from {:?} --> {:?}", socket_addr, bytes);
+            }
+        }
+    }));
+
+    
+    handles.push(tokio::spawn(async move {
+        let disconnected = _disconnection_events.next().await.unwrap();
+        println!("Client '{:?}' disconnected", disconnected);
+    }));
+
+    for handle in handles.drain(..) {
+        handle.await.unwrap();
+    }
 
     Ok(())
 }

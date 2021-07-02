@@ -21,44 +21,34 @@ async fn main() -> Result<()> {
         true
     )?;
 
-    let (endpoint, _, _, _) = peer_peer.new_endpoint().await?;
+    let (endpoint, _, mut incoming_messages, _) = peer_peer.new_endpoint().await?;
     println!("Listening on: {:?}", endpoint.socket_addr());
 
     let server: SocketAddr = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(a, b, c, d), port));
-    let (mut send_stream, mut receive_stream) = endpoint.open_bidirectional_stream(&server).await?;
     println!("Connected with server");
 
     let mut handles = Vec::new();
 
     handles.push(tokio::spawn(async move {
         println!("Send PING");
-        let msg = Bytes::from(PING);
-        send_stream.send_user_msg(msg.clone()).await.unwrap();
-        send_stream.finish().await.unwrap();
+        endpoint.send_message(Bytes::from(PING).clone(), &server).await.unwrap();
         
-        // println!("Send QUIT");
-        // send_stream.send_user_msg(Bytes::from(QUIT).clone()).await.unwrap();
+        println!("Send QUIT");
+        endpoint.send_message(Bytes::from(QUIT).clone(), &server).await.unwrap();
     }));
 
     handles.push(tokio::spawn(async move {
-        loop {
-            match receive_stream.next().await {
-                Ok(value) => {
-                    if value == Bytes::from(PONG) {
-                        println!("Pong received");
-                    } else if value == Bytes::from(QUIT) {
-                        println!("Quit!");
-                        return;
-                    } else {
-                        println!("Received --> {:?}", value);
-                    }
-                },
-                Err(_) => {}
-            };
-            
+        while let Some((_, bytes)) = incoming_messages.next().await {
+            if bytes == Bytes::from(PONG) {
+                println!("Pong received");
+            } else if bytes == Bytes::from(QUIT) {
+                println!("Quit!");
+                return;
+            } else {
+                println!("Received --> {:?}", bytes);
+            }
         }
     }));
-
 
     for handle in handles.drain(..) {
         handle.await.unwrap();
